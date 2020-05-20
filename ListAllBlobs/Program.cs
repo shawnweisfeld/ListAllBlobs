@@ -52,11 +52,6 @@ namespace ListAllBlobs
                     {
                         Console.WriteLine($"{cnt:N0} Records in {time.Elapsed.Seconds:N0} seconds ({cnt/time.Elapsed.Seconds:N0} records per second)");
                     }
-
-                    if (cnt % 50000 == 0)
-                    {
-                        continue;
-                    }
                 }
 
                 jtw.WriteEndArray();
