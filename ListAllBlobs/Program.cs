@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,56 +11,63 @@ namespace ListAllBlobs
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             Console.WriteLine("Starting");
             long cnt = 0;
             var time = new Stopwatch();
 
-            string connectionString = "your connection string";
-            string containerName = "your container name";
-            string path = $"{containerName}.json";
+            string connectionString = "";
+            string containerName = "";
+            var prefixes = new List<string>();
 
-            if (File.Exists(path))
-                File.Delete(path);
+            prefixes.Add("");
 
             time.Start();
 
-            BlobContainerClient container = new BlobContainerClient(connectionString, containerName);
-
-            using (StreamWriter sw = new StreamWriter(path))
-            using (JsonTextWriter jtw = new JsonTextWriter(sw))
+            Parallel.ForEach(prefixes, prefix =>
             {
-                jtw.Formatting = Formatting.None;
+                string path = $"{prefix}-{containerName}.json";
 
-                jtw.WriteStartArray();
+                if (File.Exists(path))
+                    File.Delete(path);
 
-                await foreach (var item in container.GetBlobsAsync())
+                BlobContainerClient container = new BlobContainerClient(connectionString, containerName);
+
+                using (StreamWriter sw = new StreamWriter(path))
+                using (JsonTextWriter jtw = new JsonTextWriter(sw))
                 {
-                    jtw.WriteStartObject();
+                    jtw.Formatting = Formatting.None;
 
-                    jtw.WritePropertyName("Name");
-                    jtw.WriteValue(item.Name);
+                    jtw.WriteStartArray();
 
-                    jtw.WritePropertyName("Content-Length");
-                    jtw.WriteValue(item.Properties.ContentLength);
-
-                    jtw.WriteEndObject();
-
-                    cnt++;
-
-                    if (cnt % 5000 == 0 && time.Elapsed.Seconds > 0)
+                    foreach (var item in container.GetBlobs(prefix: prefix))
                     {
-                        Console.WriteLine($"{cnt:N0} Records in {time.Elapsed.Seconds:N0} seconds ({cnt/time.Elapsed.Seconds:N0} records per second)");
-                    }
-                }
+                        jtw.WriteStartObject();
 
-                jtw.WriteEndArray();
-            }
+                        jtw.WritePropertyName("Name");
+                        jtw.WriteValue(item.Name);
+
+                        jtw.WritePropertyName("Content-Length");
+                        jtw.WriteValue(item.Properties.ContentLength);
+
+                        jtw.WriteEndObject();
+
+                        cnt++;
+
+                        if (cnt % 5000 == 0 && time.Elapsed.TotalSeconds > 0)
+                        {
+                            Console.WriteLine($"{cnt:N0} Records in {time.Elapsed.TotalSeconds:N0} seconds ({cnt / time.Elapsed.TotalSeconds:N0} records per second)");
+                        }
+                    }
+
+                    jtw.WriteEndArray();
+                }
+            });
 
             time.Stop();
 
-            Console.WriteLine($"Done with {cnt:N0} Records in {time.Elapsed.Seconds:N0} seconds ({cnt / time.Elapsed.Seconds:N0} records per second)");
+            Console.WriteLine($"Done with {cnt:N0} Records in {time.Elapsed.TotalSeconds:N0} seconds ({cnt / time.Elapsed.TotalSeconds:N0} records per second)");
             Console.ReadKey();
         }
 
