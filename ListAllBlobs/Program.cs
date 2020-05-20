@@ -48,7 +48,7 @@ namespace ListAllBlobs
 
                     cnt++;
 
-                    if (cnt % 5000 == 0)
+                    if (cnt % 5000 == 0 && time.Elapsed.Seconds > 0)
                     {
                         Console.WriteLine($"{cnt:N0} Records in {time.Elapsed.Seconds:N0} seconds ({cnt/time.Elapsed.Seconds:N0} records per second)");
                     }
