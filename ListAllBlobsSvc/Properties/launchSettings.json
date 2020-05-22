@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "ListAllBlobsSvc": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
