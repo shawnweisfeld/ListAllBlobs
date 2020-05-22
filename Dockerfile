@@ -4,10 +4,10 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS base
 WORKDIR /app
 
 # copy csproj and restore as distinct layers
-COPY /ListAllBlobsSvc/ListAllBlobsSvc.csproj ./
+COPY . ./
 RUN dotnet restore
 
 # copy and build everything else
 COPY . ./
-RUN dotnet publish ListAllBlobsSvc.csproj -c Release -o out
+RUN dotnet publish ./ListAllBlobsSvc.csproj -c Release -o out
 ENTRYPOINT ["dotnet", "out/ListAllBlobsSvc.dll"]
