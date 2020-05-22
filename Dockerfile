@@ -3,9 +3,11 @@
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS base
 WORKDIR /app
 
-# Copy the published web app
-COPY /ListAllBlobsSvc/ /app
+# copy csproj and restore as distinct layers
+COPY /ListAllBlobsSvc/ListAllBlobsSvc.csproj ./
+RUN dotnet restore
 
-# Run command
-# ENTRYPOINT ["dotnet", "ListAllBlobsSvc.dll"]
-ENTRYPOINT ["echo", "hello"]
+# copy and build everything else
+COPY . ./
+RUN dotnet publish -c Release -o out
+ENTRYPOINT ["dotnet", "out/ListAllBlobsSvc.dll"]
