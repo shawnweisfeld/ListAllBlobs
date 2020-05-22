@@ -7,4 +7,5 @@ WORKDIR /app
 COPY /ListAllBlobsSvc/ /app
 
 # Run command
-ENTRYPOINT ["dotnet", "ListAllBlobsSvc.dll"]
+# ENTRYPOINT ["dotnet", "ListAllBlobsSvc.dll"]
+ENTRYPOINT ["echo", "hello"]
