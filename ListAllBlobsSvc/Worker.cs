@@ -58,8 +58,12 @@ namespace ListAllBlobsSvc
 
         private async Task ExecuteContainer(CancellationToken stoppingToken)
         {
+            //keep count of how long we have been working
+            var time = new Stopwatch();
+
             //tell the user we are starting and start the clock
             _logger.LogDebug("Starting");
+            time.Start();
 
             //a list of all the results from scanning our container
             var prefixTasks = new List<Task<ContainerPrefixScanResult>>();
@@ -81,9 +85,11 @@ namespace ListAllBlobsSvc
             //wait for the scan of each of the prefixes to finish
             var results = await Task.WhenAll(prefixTasks);
 
+            time.Stop();
+
             //tell the user we are done
             var ttlBlobs = results.Sum(x => x.TotalBlobs);
-            var ttlTime = results.Sum(x => x.TotalSeconds);
+            var ttlTime = time.Elapsed.TotalSeconds;
             _logger.LogInformation($"ALL Done with {ttlBlobs:N0} Records in {ttlTime:N0} seconds ({ttlBlobs / ttlTime:N0} records per second)");
         }
 
