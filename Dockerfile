@@ -9,5 +9,5 @@ RUN dotnet restore
 
 # copy and build everything else
 COPY . ./
-RUN dotnet publish ./ListAllBlobsSvc.csproj -c Release -o out
+RUN dotnet publish ./ListAllBlobsSvc/ListAllBlobsSvc.csproj -c Release -o out
 ENTRYPOINT ["dotnet", "out/ListAllBlobsSvc.dll"]
