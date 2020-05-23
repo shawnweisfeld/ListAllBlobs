@@ -7,7 +7,9 @@ Build Status
 Build posted to [Docker Hub](https://hub.docker.com/r/sweisfel/listallblobs)
 
 Example command to pull the docker hub image and run it using Azure Container Instance
+
 ``` bash
+
 az container create \
     --name "listallblobs" \
     --resource-group "open-images-dataset" \
@@ -19,8 +21,12 @@ az container create \
     --environment-variables \
         ListAllblobsSvc__BlobStorageToScanConnectionString="DefaultEndpointsProtocol=http;AccountName=youracct;AccountKey=yourkey;EndpointSuffix=core.windows.net" \
         ListAllblobsSvc__BlobStroageToScanContainer="myblobs" \
+        ListAllblobsSvc__BlobStroageToScanPrefix="" \
         ListAllblobsSvc__BlobStroageToUploadConnectionString="DefaultEndpointsProtocol=http;AccountName=youraccct;AccountKey=yourkey;EndpointSuffix=core.windows.net" \
-        ListAllblobsSvc__BlobStroageToUploadContainer="mycounts"
+        ListAllblobsSvc__BlobStroageToUploadContainer="mycounts" \
+        ListAllblobsSvc__ThreadCount="0" 
+
 ```
 [More info on deploying to Azure Container Instance using the Azure CLI](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quickstart)
 
+[See appsettings.json for details on what all the environment variables do](./ListAllBlobsSvc/appsettings.json)
