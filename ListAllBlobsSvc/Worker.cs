@@ -216,7 +216,7 @@ namespace ListAllBlobsSvc
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    _logger.LogError(ex, "ProcessFolder Error");
                 }
                 
                 //release our thread in the pool, allowing someone else to get in
